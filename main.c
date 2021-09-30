@@ -70,25 +70,41 @@ int main(int argc, char **argv)
     perror(argv[1]);
     exit(1);
   }
+  int fst = 1;
   int c;
   int level = 0;
   int ins_quotes = 0;
   char *line = calloc(BUFSIZ, sizeof(char));
   int pos = 0;
+  skip_spaces(inp);
   while ((c = fgetc(inp)) >= 0) {
-    if (c == '{') {
+    if (c == '{' || c == '[') {
       print_n_tabs(level);
       add_str(line);
       level++;
-      add_str(" {\n");
+      if (pos != 0 && fst != 1) {
+	add_to_buf(' ');
+      }
+      bzero(line, BUFSIZ);
+      pos = 0;
+      skip_spaces(inp);
+      add_to_buf(c);
+      add_to_buf('\n');
     }
-    else if (c == '}') {
+    else if (c == '}' | c == ']') {
       print_n_tabs(level);
       add_str(line);
       add_to_buf('\n');
       level--;
       print_n_tabs(level);
-      add_str("}\n");
+      add_to_buf(c);
+      skip_spaces(inp);
+      int j = fgetc(inp);
+      if (j == ',')
+	add_to_buf(',');
+      else
+	ungetc(j, inp);
+      add_to_buf('\n');
       bzero(line, BUFSIZ);
       pos = 0;
     }
@@ -104,6 +120,7 @@ int main(int argc, char **argv)
       line[pos] = c;
       pos++;
     }
+    fst = 0;
   }
   print_buf();
   return 0;
