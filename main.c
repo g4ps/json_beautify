@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
 #include <ctype.h>
 
 char *mbuf = NULL;
@@ -85,7 +83,7 @@ int main(int argc, char **argv)
       if (pos != 0 && fst != 1) {
 	add_to_buf(' ');
       }
-      bzero(line, BUFSIZ);
+      memset(line, 0, BUFSIZ);
       pos = 0;
       skip_spaces(inp);
       add_to_buf(c);
@@ -105,14 +103,14 @@ int main(int argc, char **argv)
       else
 	ungetc(j, inp);
       add_to_buf('\n');
-      bzero(line, BUFSIZ);
+      memset(line, 0, BUFSIZ);
       pos = 0;
     }
     else if (c == ',') {
       print_n_tabs(level);
       add_str(line);
       add_str(",\n");
-      bzero(line, BUFSIZ);
+      memset(line, 0, BUFSIZ);
       pos = 0;
       skip_spaces(inp);
     }
